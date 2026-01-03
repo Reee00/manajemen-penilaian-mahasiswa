@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sistem Manajemen Nilai Mahasiswa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>📊 Sistem Manajemen Nilai Mahasiswa</h1>
+        <p>Platform Manajemen Penilaian Terintegrasi</p>
+      </header>
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('input', this)">
+          📝 Input Nilai
+        </button>
+        <button class="tab-btn" onclick="switchTab('data', this)">
+          📋 Data Mahasiswa
+        </button>
+        <button class="tab-btn" onclick="switchTab('analytics', this)">
+          📈 Analitik
+        </button>
+        <button class="tab-btn" onclick="switchTab('settings', this)">
+          ⚙️ Pengaturan
+        </button>
+      </div>
+
+      <!-- TAB: INPUT NILAI -->
+      <div id="tab-input" class="tab-content active">
+        <div class="card">
+          <h2>
+            <span>Input Data Nilai</span>
+            <button
+              class="btn btn-secondary"
+              onclick="resetForm()"
+              title="Reset Form"
+            >
+              Reset Form
+            </button>
+          </h2>
+
+          <form id="nilaiForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="nim">NIM *</label>
+                <input
+                  type="text"
+                  id="nim"
+                  placeholder="Contoh: 2024001"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="nama">Nama Lengkap *</label>
+                <input
+                  type="text"
+                  id="nama"
+                  placeholder="Nama mahasiswa"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="jurusan">Jurusan *</label>
+                <select id="jurusan" required>
+                  <option value="">Pilih Jurusan</option>
+                  <option value="Teknik Informatika">Teknik Informatika</option>
+                  <option value="Sistem Informasi">Sistem Informasi</option>
+                  <option value="Manajemen">Manajemen</option>
+                  <option value="Akuntansi">Akuntansi</option>
+                  <option value="Desain Grafis">Desain Grafis</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="semester">Semester *</label>
+                <select id="semester" required>
+                  <option value="">Pilih Semester</option>
+                  <option value="1">Semester 1</option>
+                  <option value="2">Semester 2</option>
+                  <option value="3">Semester 3</option>
+                  <option value="4">Semester 4</option>
+                  <option value="5">Semester 5</option>
+                  <option value="6">Semester 6</option>
+                  <option value="7">Semester 7</option>
+                  <option value="8">Semester 8</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="mataKuliah">Mata Kuliah *</label>
+                <input
+                  type="text"
+                  id="mataKuliah"
+                  placeholder="Nama mata kuliah"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="sks">SKS *</label>
+                <input
+                  type="number"
+                  id="sks"
+                  min="1"
+                  max="6"
+                  placeholder="Jumlah SKS"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="tugas">Nilai Tugas (0-100) *</label>
+                <input
+                  type="number"
+                  id="tugas"
+                  min="0"
+                  max="100"
+                  placeholder="0-100"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="uts">Nilai UTS (0-100) *</label>
+                <input
+                  type="number"
+                  id="uts"
+                  min="0"
+                  max="100"
+                  placeholder="0-100"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="uas">Nilai UAS (0-100) *</label>
+                <input
+                  type="number"
+                  id="uas"
+                  min="0"
+                  max="100"
+                  placeholder="0-100"
+                  required
+                />
+              </div>
+            </div>
+
+            <div
+              style="
+                margin-top: 1rem;
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+              "
+            >
+              <button type="submit" class="btn btn-primary" style="flex: 1">
+                💾 Simpan Data
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="importData()"
+              >
+                📥 Import CSV
+              </button>
+              <button
+                type="button"
+                class="btn btn-success"
+                onclick="exportCSV()"
+              >
+                📊 Export CSV
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="exportJSON()"
+              >
+                💾 Export JSON
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB: DATA MAHASISWA -->
+      <div id="tab-data" class="tab-content">
+        <div class="stats">
+          <div class="stat-card">
+            <h3>Total Mahasiswa</h3>
+            <div class="number" id="statTotal">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Rata-rata Kelas</h3>
+            <div class="number" id="statAvg">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Tingkat Kelulusan</h3>
+            <div class="number" id="statPass">0%</div>
+          </div>
+          <div class="stat-card">
+            <h3>IPK Rata-rata</h3>
+            <div class="number" id="statIPK">0.00</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>
+            <span>Daftar Nilai Mahasiswa</span>
+            <div class="export-buttons">
+              <button class="btn btn-danger" onclick="clearAllData()">
+                🗑️ Hapus Semua
+              </button>
+            </div>
+          </h2>
+
+          <!-- Search & Filter -->
+          <div class="search-filter">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="🔍 Cari NIM, Nama, atau Mata Kuliah..."
+            />
+            <select id="filterJurusan">
+              <option value="">Semua Jurusan</option>
+              <option value="Teknik Informatika">Teknik Informatika</option>
+              <option value="Sistem Informasi">Sistem Informasi</option>
+              <option value="Manajemen">Manajemen</option>
+              <option value="Akuntansi">Akuntansi</option>
+              <option value="Desain Grafis">Desain Grafis</option>
+            </select>
+
+            <select id="filterGrade">
+              <option value="">Semua Grade</option>
+              <option value="A">Grade A</option>
+              <option value="B">Grade B</option>
+              <option value="C">Grade C</option>
+              <option value="D">Grade D</option>
+            </select>
+
+            <select id="filterStatus">
+              <option value="">Semua Status</option>
+              <option value="Lulus">Lulus</option>
+              <option value="Tidak Lulus">Tidak Lulus</option>
+            </select>
+          </div>
+
+          <!-- Table -->
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th class="sortable" onclick="sortTable('nim', this)">NIM</th>
+                  <th class="sortable" onclick="sortTable('nama', this)">
+                    Nama
+                  </th>
+                  <th class="sortable" onclick="sortTable('jurusan', this)">
+                    Jurusan
+                  </th>
+                  <th class="sortable" onclick="sortTable('mataKuliah', this)">
+                    Mata Kuliah
+                  </th>
+                  <th class="sortable" onclick="sortTable('nilaiAkhir', this)">
+                    Nilai Akhir
+                  </th>
+                  <th class="sortable" onclick="sortTable('grade', this)">
+                    Grade
+                  </th>
+                  <th class="sortable" onclick="sortTable('status', this)">
+                    Status
+                  </th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="nilaiTable"></tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </div>
+
+      <!-- TAB: ANALYTICS -->
+      <div id="tab-analytics" class="tab-content">
+        <div class="card">
+          <h2>Distribusi Grade</h2>
+          <div class="chart-container">
+            <div class="chart-bars" id="gradeChart"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Statistik per Jurusan</h2>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Jurusan</th>
+                  <th>Jumlah Mahasiswa</th>
+                  <th>Rata-rata Nilai</th>
+                  <th>Tingkat Kelulusan</th>
+                  <th>IPK Rata-rata</th>
+                </tr>
+              </thead>
+              <tbody id="jurusanStats"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Top 10 Mahasiswa</h2>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Peringkat</th>
+                  <th>NIM</th>
+                  <th>Nama</th>
+                  <th>Jurusan</th>
+                  <th>IPK</th>
+                </tr>
+              </thead>
+              <tbody id="topStudents"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: SETTINGS -->
+      <div id="tab-settings" class="tab-content">
+        <div class="card">
+          <h2>Pengaturan Sistem Penilaian</h2>
+
+          <div class="form-group">
+            <label for="bobotTugas">Bobot Tugas (%)</label>
+            <input type="number" id="bobotTugas" value="30" min="0" max="100" />
+          </div>
+
+          <div class="form-group">
+            <label for="bobotUTS">Bobot UTS (%)</label>
+            <input type="number" id="bobotUTS" value="30" min="0" max="100" />
+          </div>
+
+          <div class="form-group">
+            <label for="bobotUAS">Bobot UAS (%)</label>
+            <input type="number" id="bobotUAS" value="40" min="0" max="100" />
+          </div>
+
+          <div class="form-group">
+            <label for="batasLulus">Batas Kelulusan (Nilai Minimum)</label>
+            <input type="number" id="batasLulus" value="60" min="0" max="100" />
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; margin-top: 1rem">
+            <button class="btn btn-primary" onclick="saveSettings()">
+              💾 Simpan Pengaturan
+            </button>
+            <button class="btn btn-secondary" onclick="resetSettings()">
+              🔄 Reset Default
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Backup & Restore</h2>
+          <p style="color: #64748b; margin-bottom: 1rem">
+            Backup data Anda untuk menghindari kehilangan data
+          </p>
+          <div style="display: flex; gap: 1rem">
+            <button class="btn btn-success" onclick="backupData()">
+              💾 Backup Data
+            </button>
+            <button class="btn btn-warning" onclick="restoreData()">
+              📥 Restore Data
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DETAIL -->
+    <div id="detailModal" class="modal" onclick="modalOutsideClick(event)">
+      <div
+        class="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detailTitle"
+      >
+        <div class="modal-header">
+          <h2 id="detailTitle">Detail Nilai Mahasiswa</h2>
+          <button class="close-btn" onclick="closeModal('detailModal')">
+            ×
+          </button>
+        </div>
+        <div id="detailContent"></div>
+      </div>
+    </div>
+
+    <!-- MODAL EDIT -->
+    <div id="editModal" class="modal" onclick="modalOutsideClick(event)">
+      <div
+        class="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="editTitle"
+      >
+        <div class="modal-header">
+          <h2 id="editTitle">Edit Data Mahasiswa</h2>
+          <button class="close-btn" onclick="closeModal('editModal')">×</button>
+        </div>
+
+        <form id="editForm">
+          <input type="hidden" id="editIndex" />
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="editNim">NIM</label>
+              <input type="text" id="editNim" required />
+            </div>
+            <div class="form-group">
+              <label for="editNama">Nama</label>
+              <input type="text" id="editNama" required />
+            </div>
+            <div class="form-group">
+              <label for="editJurusan">Jurusan</label>
+              <select id="editJurusan" required>
+                <option value="Teknik Informatika">Teknik Informatika</option>
+                <option value="Sistem Informasi">Sistem Informasi</option>
+                <option value="Manajemen">Manajemen</option>
+                <option value="Akuntansi">Akuntansi</option>
+                <option value="Desain Grafis">Desain Grafis</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="editSemester">Semester</label>
+              <select id="editSemester" required>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="editMataKuliah">Mata Kuliah</label>
+              <input type="text" id="editMataKuliah" required />
+            </div>
+
+            <div class="form-group">
+              <label for="editSks">SKS</label>
+              <input type="number" id="editSks" min="1" max="6" required />
+            </div>
+
+            <div class="form-group">
+              <label for="editTugas">Nilai Tugas</label>
+              <input type="number" id="editTugas" min="0" max="100" required />
+            </div>
+
+            <div class="form-group">
+              <label for="editUts">Nilai UTS</label>
+              <input type="number" id="editUts" min="0" max="100" required />
+            </div>
+
+            <div class="form-group">
+              <label for="editUas">Nilai UAS</label>
+              <input type="number" id="editUas" min="0" max="100" required />
+            </div>
+          </div>
+
+          <div style="margin-top: 1rem; display: flex; gap: 0.75rem">
+            <button type="submit" class="btn btn-primary">
+              💾 Simpan Perubahan
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeModal('editModal')"
+            >
+              Batal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div id="loading" class="loading-overlay">
+      <div class="loading-card">
+        <div class="spinner"></div>
+        <div><strong id="loadingText">Memuat...</strong></div>
+      </div>
+    </div>
+    <script src="assets/js/script.js"></script>
+  </body>
+</html>
